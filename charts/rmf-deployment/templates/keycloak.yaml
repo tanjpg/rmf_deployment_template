@@ -46,6 +46,8 @@ spec:
         app: keycloak
         component: db
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: postgresql
           image: {{ .Values.global.REGISTRY_DOCKER | default "docker.io" }}/{{ .Values.keycloak.POSTGRES_IMAGE }}
@@ -117,6 +119,8 @@ spec:
         app: keycloak
         component: app
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: keycloak
           image: {{ .Values.global.REGISTRY_QUAY | default "quay.io" }}/{{ .Values.keycloak.KEYCLOAK_IMAGE }}

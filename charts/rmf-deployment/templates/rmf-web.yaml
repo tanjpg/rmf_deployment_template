@@ -47,6 +47,8 @@ spec:
         app: rmf-web-rmf-server
         component: db
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: postgresql
           image: {{ .Values.global.REGISTRY_DOCKER | default "docker.io" }}/{{ .Values.keycloak.POSTGRES_IMAGE }}
@@ -111,6 +113,8 @@ spec:
         app: rmf-web-rmf-server
         component: app
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: rmf-web-rmf-server
           image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf_web.API_SERVER_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
@@ -215,6 +219,8 @@ spec:
       labels:
         app: rmf-web-dashboard
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: rmf-web-dashboard
           image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf_web.DASHBOARD_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
