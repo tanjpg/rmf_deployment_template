@@ -72,6 +72,8 @@ spec:
               subPath: localtime
               name: vol-tz-singapore
               readOnly: true
+      imagePullSecrets:
+        - name: ghcr-secret
       volumes:
         - name: keycloak-db
           persistentVolumeClaim:
@@ -275,6 +277,8 @@ spec:
   template:
     spec:
       serviceAccount: keycloak-setup-sa
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
       - name: keycloak-setup
         image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.keycloak.KEYCLOAK_SETUP_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}

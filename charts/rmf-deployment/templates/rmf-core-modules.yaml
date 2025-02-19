@@ -8,6 +8,8 @@ metadata:
     app: rmf-traffic-schedule
 spec:
   restartPolicy: Always
+  imagePullSecrets:
+    - name: ghcr-secret
   containers:
     - name: rmf-traffic-schedule
       image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
@@ -47,6 +49,8 @@ metadata:
   name: rmf-task-dispatcher
 spec:
   restartPolicy: Always
+  imagePullSecrets:
+    - name: ghcr-secret
   containers:
     - name: rmf-task-dispatcher
       image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
@@ -92,6 +96,8 @@ metadata:
   name: rmf-lift-supervisor
 spec:
   restartPolicy: Always
+  imagePullSecrets:
+    - name: ghcr-secret
   containers:
     - name: rmf-lift-supervisor
       image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
@@ -130,6 +136,8 @@ metadata:
   name: rmf-traffic-blockade
 spec:
   restartPolicy: Always
+  imagePullSecrets:
+    - name: ghcr-secret
   containers:
     - name: rmf-traffic-blockade
       image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
@@ -192,6 +200,8 @@ spec:
         app: rmf-trajectory-visualizer
     spec:
       restartPolicy: Always
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: rmf-trajectory-visualizer
           image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
