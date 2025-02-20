@@ -1,6 +1,6 @@
 FROM docker.io/ubuntu:24.04
 
-ARG RMF_WEB_COMMIT="0.2.0"
+ARG RMF_WEB_COMMIT="main"
 
 # If we are building for deployment use with auth, otherwise "local"
 ARG DASHBOARD_DIRECTORY="with_auth"

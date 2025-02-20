@@ -29,7 +29,7 @@ RUN mkdir -p /ws/install/local
 
 FROM rmf as api_server
 
-ARG RMF_WEB_COMMIT="0.2.0"
+ARG RMF_WEB_COMMIT="main"
 
 # install pnpm
 RUN curl -fsSL https://get.pnpm.io/install.sh | bash -
