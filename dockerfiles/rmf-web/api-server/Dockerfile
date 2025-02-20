@@ -3,8 +3,8 @@ ARG ROS_DISTRO="jazzy"
 ARG BUILDER
 FROM $BUILDER as rmf
 
-ARG RMF_INTERNAL_MSGS_COMMIT="main"
-ARG RMF_BUILDING_MAP_MSGS_COMMIT="main"
+ARG RMF_INTERNAL_MSGS_COMMIT="3.3.1"
+ARG RMF_BUILDING_MAP_MSGS_COMMIT="1.4.1"
 
 # fetch sources
 RUN mkdir -p /ws && cd /ws \
@@ -29,7 +29,7 @@ RUN mkdir -p /ws/install/local
 
 FROM rmf as api_server
 
-ARG RMF_WEB_COMMIT="main"
+ARG RMF_WEB_COMMIT="0.2.0"
 
 # install pnpm
 RUN curl -fsSL https://get.pnpm.io/install.sh | bash -
