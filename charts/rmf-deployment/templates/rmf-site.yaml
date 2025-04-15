@@ -2,12 +2,10 @@
 ---
 apiVersion: v1
 kind: Pod
-namespace: 
 metadata:
   name: rmf-building-map-server
 spec:
   restartPolicy: Always
-  hostNetwork: true
   containers:
     - name: rmf-building-map-server
       image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
@@ -38,12 +36,10 @@ spec:
 ---
 apiVersion: v1
 kind: Pod
-namespace: 
 metadata:
   name: rmf-tinyrobot-fleet-adapter
 spec:
   restartPolicy: Always
-  hostNetwork: true
   containers:
     - name: rmf-tinyrobot-fleet-adapter
       image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
@@ -77,12 +73,10 @@ spec:
 ---
 apiVersion: v1
 kind: Pod
-namespace:
 metadata:
   name: rmf-mutex-group-supervisor
 spec:
   restartPolicy: Always
-  hostNetwork: true
   containers:
     - name: rmf-mutex-group-supervisor
       image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
