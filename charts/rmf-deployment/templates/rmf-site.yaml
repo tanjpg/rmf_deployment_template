@@ -66,7 +66,7 @@ spec:
           use_sim_time:="false"
           nav_graph_file:={{ .Values.adapters.NAV_GRAPH }}
           config_file:={{ .Values.adapters.FLEET_ADAPTER_CONFIG }}
-          server_uri:=={{ .Values.global.RMF_SERVER_URI }}
+          server_uri:={{ .Values.global.RMF_SERVER_URI }}
       volumeMounts:
         - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
           name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
