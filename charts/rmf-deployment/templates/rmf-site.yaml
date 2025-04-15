@@ -63,7 +63,7 @@ spec:
         - >
           /ros_entrypoint.sh
           ros2 launch rmf_demos_fleet_adapter fleet_adapter.launch.xml
-          use_sim_time:={{ .Values.global.RMF_USE_SIM_TIME }}
+          use_sim_time:="false"
           nav_graph_file:={{ .Values.adapters.NAV_GRAPH }}
           config_file:={{ .Values.adapters.FLEET_ADAPTER_CONFIG }}
       volumeMounts:
