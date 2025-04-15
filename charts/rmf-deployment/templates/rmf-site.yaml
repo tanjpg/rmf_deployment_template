@@ -74,6 +74,39 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
+  name: rmf-fleet-manager
+spec:
+  restartPolicy: Always
+  containers:
+    - name: rmf-fleet-manager
+      image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: {{ .Values.global.DDS_ENV | quote }}
+          value: {{ .Values.global.DDS_CONFIG | quote }}
+        - name: ROS_DOMAIN_ID
+          value: {{ .Values.global.ROS_DOMAIN_ID | quote }}
+        - name: RMW_IMPLEMENTATION
+          value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
+        - name: FLEET_ADAPTER_CONFIG
+          value: {{ .Values.adapters.FLEET_ADAPTER_CONFIG | quote }}
+      command: ["/bin/bash"]
+      args: 
+        - -c
+        - >
+          /ros_entrypoint.sh
+          ros2 run rmf_demos_fleet_adapter fleet_manager --config_file $(FLEET_ADAPTER_CONFIG)
+      volumeMounts:
+        - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
+          name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+  volumes:
+    - name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+      configMap:
+        name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
   name: rmf-mutex-group-supervisor
 spec:
   restartPolicy: Always
