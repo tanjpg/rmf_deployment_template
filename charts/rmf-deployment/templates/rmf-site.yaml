@@ -34,46 +34,74 @@ spec:
       configMap:
         name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
 ---
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: rmf-tinyrobot-fleet-adapter
+  labels:
+    app: rmf-tinyrobot-fleet-adapter
 spec:
-  restartPolicy: Always
-  containers:
-    - name: rmf-tinyrobot-fleet-adapter
-      image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
-      imagePullPolicy: IfNotPresent
-      env:
-        - name: {{ .Values.global.DDS_ENV | quote }}
-          value: {{ .Values.global.DDS_CONFIG | quote }}
-        - name: ROS_DOMAIN_ID
-          value: {{ .Values.global.ROS_DOMAIN_ID | quote }}
-        - name: RMW_IMPLEMENTATION
-          value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
-        - name: RMF_SERVER_URI
-          value: {{ .Values.global.RMF_SERVER_URI | quote }}
-        - name: NAV_GRAPH
-          value: {{ .Values.adapters.NAV_GRAPH | quote }}
-        - name: FLEET_ADAPTER_CONFIG
-          value: {{ .Values.adapters.FLEET_ADAPTER_CONFIG | quote }}
-      command: ["/bin/bash"]
-      args: 
-        - -c
-        - >
-          /ros_entrypoint.sh
-          ros2 launch rmf_demos_fleet_adapter fleet_adapter.launch.xml
-          use_sim_time:="false"
-          nav_graph_file:={{ .Values.adapters.NAV_GRAPH }}
-          config_file:={{ .Values.adapters.FLEET_ADAPTER_CONFIG }}
-          server_uri:={{ .Values.global.RMF_SERVER_URI }}
-      volumeMounts:
-        - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
-          name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
-  volumes:
-    - name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
-      configMap:
-        name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+  selector:
+    matchLabels:
+      app: rmf-tinyrobot-fleet-adapter
+  template:
+    metadata:
+      labels:
+        app: rmf-tinyrobot-fleet-adapter
+    spec:
+      containers:
+        - name: rmf-tinyrobot-fleet-adapter
+        - name: rmf-tinyrobot-fleet-adapter
+          image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: {{ .Values.global.DDS_ENV | quote }}
+              value: {{ .Values.global.DDS_CONFIG | quote }}
+            - name: ROS_DOMAIN_ID
+              value: {{ .Values.global.ROS_DOMAIN_ID | quote }}
+            - name: RMW_IMPLEMENTATION
+              value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
+            - name: RMF_SERVER_URI
+              value: {{ .Values.global.RMF_SERVER_URI | quote }}
+            - name: NAV_GRAPH
+              value: {{ .Values.adapters.NAV_GRAPH | quote }}
+            - name: FLEET_ADAPTER_CONFIG
+              value: {{ .Values.adapters.FLEET_ADAPTER_CONFIG | quote }}
+          command: ["/bin/bash"]
+          args: 
+            - -c
+            - >
+              /ros_entrypoint.sh
+              ros2 launch rmf_demos_fleet_adapter fleet_adapter.launch.xml
+              use_sim_time:="false"
+              nav_graph_file:={{ .Values.adapters.NAV_GRAPH }}
+              config_file:={{ .Values.adapters.FLEET_ADAPTER_CONFIG }}
+              server_uri:={{ .Values.global.RMF_SERVER_URI }}
+          volumeMounts:
+            - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
+              name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+          ports:
+            - containerPort: 8006
+              name: websocket-port
+              protocol: TCP
+          volumeMounts:
+            - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
+              name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+            - mountPath: /etc/config
+              name: jwt-pub-key
+              readOnly: true
+      volumes:
+        - name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+          configMap:
+            name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+        - name: jwt-pub-key
+          configMap:
+            name: jwt-pub-key
+      tolerations:
+        - key: reserved
+          operator: Equal
+          value: rmf
+          effect: NoSchedule
 ---
 apiVersion: v1
 kind: Pod
