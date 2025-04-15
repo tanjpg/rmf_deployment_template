@@ -51,7 +51,6 @@ spec:
     spec:
       containers:
         - name: rmf-tinyrobot-fleet-adapter
-        - name: rmf-tinyrobot-fleet-adapter
           image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
           imagePullPolicy: IfNotPresent
           env:
