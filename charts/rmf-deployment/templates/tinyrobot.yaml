@@ -58,7 +58,9 @@ spec:
               use_sim_time:={{ .Values.global.RMF_USE_SIM_TIME }}
               nav_graph_file:="/opt/rmf_sim/share/rmf_demos_maps/maps/office/nav_graphs/0.yaml"
               config_file:="/opt/rmf_sim/share/rmf_demos/config/office/tinyRobot_config.yaml"
-              server_uri:={{ .Values.global.RMF_SERVER_URI }}
+              server_uri:={{ .Values.global.RMF_SERVER_URI }} & ros2 launch rmf_demos_gz simulation.launch.xml
+              headless:=true
+              map_name:="office"
           volumeMounts:
             - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
               name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
