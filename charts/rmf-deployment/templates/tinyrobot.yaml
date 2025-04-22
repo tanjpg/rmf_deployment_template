@@ -1,14 +1,59 @@
 {{- if .Values.ENABLE_RMF -}}
 ---
 apiVersion: v1
-kind: Service
+kind: Pod
+namespace: 
 metadata:
   name: rmf-tinyrobot-fleet-adapter
+spec:
+  restartPolicy: Always
+  hostNetwork: true
+  containers:
+    - name: rmf-tinyrobot-fleet-adapter
+      image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: {{ .Values.global.DDS_ENV | quote }}
+          value: {{ .Values.global.DDS_CONFIG | quote }}
+        - name: ROS_DOMAIN_ID
+          value: {{ .Values.global.ROS_DOMAIN_ID | quote }}
+        - name: RMW_IMPLEMENTATION
+          value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
+        - name: RMF_SERVER_URI
+          value: {{ .Values.global.RMF_SERVER_URI | quote }}
+        - name: NAV_GRAPH
+          value: {{ .Values.adapters.NAV_GRAPH | quote }}
+        - name: FLEET_ADAPTER_CONFIG
+          value: {{ .Values.adapters.FLEET_ADAPTER_CONFIG | quote }}
+        - name: RMF_USE_SIM_TIME
+          value: {{ .Values.global.RMF_USE_SIM_TIME | quote }}
+      command: ["/bin/bash"]
+      args: 
+        - -c
+        - >
+          /ros_entrypoint.sh
+          ros2 launch rmf_demos_fleet_adapter fleet_adapter.launch.xml
+          use_sim_time:={{ .Values.global.RMF_USE_SIM_TIME }}
+          nav_graph_file:={{ .Values.adapters.NAV_GRAPH }}
+          config_file:={{ .Values.adapters.FLEET_ADAPTER_CONFIG }}
+          server_uri:={{ .Values.global.RMF_SERVER_URI }}
+      volumeMounts:
+        - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
+          name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+  volumes:
+    - name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+      configMap:
+        name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rmf-simulation
   labels:
-    app: rmf-tinyrobot-fleet-adapter
+    app: rmf-simulation
 spec:
   selector:
-    app: rmf-tinyrobot-fleet-adapter
+    app: rmf-simulation
   ports:
     - protocol: TCP
       port: 8006
@@ -18,57 +63,57 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rmf-tinyrobot-fleet-adapter
+  name: rmf-simulation
   labels:
-    app: rmf-tinyrobot-fleet-adapter
+    app: rmf-simulation
 spec:
   selector:
     matchLabels:
-      app: rmf-tinyrobot-fleet-adapter
+      app: rmf-simulation
   template:
     metadata:
       labels:
-        app: rmf-tinyrobot-fleet-adapter
+        app: rmf-simulation
     spec:
       containers:
-        - name: rmf-tinyrobot-fleet-adapter
-          image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: {{ .Values.global.DDS_ENV | quote }}
-              value: {{ .Values.global.DDS_CONFIG | quote }}
-            - name: ROS_DOMAIN_ID
-              value: {{ .Values.global.ROS_DOMAIN_ID | quote }}
-            - name: RMW_IMPLEMENTATION
-              value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
-            - name: RMF_SERVER_URI
-              value: {{ .Values.global.RMF_SERVER_URI | quote }}
-            - name: NAV_GRAPH
-              value: {{ .Values.adapters.NAV_GRAPH | quote }}
-            - name: FLEET_ADAPTER_CONFIG
-              value: {{ .Values.adapters.FLEET_ADAPTER_CONFIG | quote }}
-            - name: RMF_USE_SIM_TIME
-              value: {{ .Values.global.RMF_USE_SIM_TIME | quote }}
-          command: ["/bin/bash"]
-          args: 
-            - -c
-            - >
-              /ros_entrypoint.sh
-              ros2 launch rmf_demos_fleet_adapter fleet_adapter.launch.xml
-              use_sim_time:={{ .Values.global.RMF_USE_SIM_TIME }}
-              nav_graph_file:={{ .Values.adapters.NAV_GRAPH }}
-              config_file:={{ .Values.adapters.FLEET_ADAPTER_CONFIG }}
-              server_uri:={{ .Values.global.RMF_SERVER_URI }}
-          ports:
-            - containerPort: 8006
-              name: websocket-port
-              protocol: TCP
-          volumeMounts:
-            - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
-              name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
-            - mountPath: /etc/config
-              name: jwt-pub-key
-              readOnly: true
+        # - name: rmf-tinyrobot-fleet-adapter
+        #   image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
+        #   imagePullPolicy: IfNotPresent
+        #   env:
+        #     - name: {{ .Values.global.DDS_ENV | quote }}
+        #       value: {{ .Values.global.DDS_CONFIG | quote }}
+        #     - name: ROS_DOMAIN_ID
+        #       value: {{ .Values.global.ROS_DOMAIN_ID | quote }}
+        #     - name: RMW_IMPLEMENTATION
+        #       value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
+        #     - name: RMF_SERVER_URI
+        #       value: {{ .Values.global.RMF_SERVER_URI | quote }}
+        #     - name: NAV_GRAPH
+        #       value: {{ .Values.adapters.NAV_GRAPH | quote }}
+        #     - name: FLEET_ADAPTER_CONFIG
+        #       value: {{ .Values.adapters.FLEET_ADAPTER_CONFIG | quote }}
+        #     - name: RMF_USE_SIM_TIME
+        #       value: {{ .Values.global.RMF_USE_SIM_TIME | quote }}
+        #   command: ["/bin/bash"]
+        #   args: 
+        #     - -c
+        #     - >
+        #       /ros_entrypoint.sh
+        #       ros2 launch rmf_demos_fleet_adapter fleet_adapter.launch.xml
+        #       use_sim_time:={{ .Values.global.RMF_USE_SIM_TIME }}
+        #       nav_graph_file:={{ .Values.adapters.NAV_GRAPH }}
+        #       config_file:={{ .Values.adapters.FLEET_ADAPTER_CONFIG }}
+        #       server_uri:={{ .Values.global.RMF_SERVER_URI }}
+        #   ports:
+        #     - containerPort: 8006
+        #       name: websocket-port
+        #       protocol: TCP
+        #   volumeMounts:
+        #     - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
+        #       name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+        #     - mountPath: /etc/config
+        #       name: jwt-pub-key
+        #       readOnly: true
         - name: rmf-simulation
           image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
           imagePullPolicy: IfNotPresent
@@ -110,7 +155,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: rmf-tinyrobot-fleet-adapter
+  name: rmf-simulation
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     cert-manager.io/cluster-issuer: {{ .Values.CERT_MANAGER_ISSUER }}
@@ -124,11 +169,11 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: rmf-tinyrobot-fleet-adapter
+                name: rmf-simulation
                 port:
                   number: 8006
   tls:
     - hosts:
         - {{ .Values.hostName | quote }}
-      secretName: rmf-tinyrobot-fleet-adapter-ingress-tls
+      secretName: rmf-simulation-ingress-tls
 {{- end -}}
