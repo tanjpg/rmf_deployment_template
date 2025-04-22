@@ -106,6 +106,36 @@ spec:
             - mountPath: /etc/config
               name: jwt-pub-key
               readOnly: true
+        - name: rmf-simulation
+          image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: {{ .Values.global.DDS_ENV | quote }}
+              value: {{ .Values.global.DDS_CONFIG | quote }}
+            - name: ROS_DOMAIN_ID
+              value: {{ .Values.global.ROS_DOMAIN_ID | quote }}
+            - name: RMW_IMPLEMENTATION
+              value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
+            - name: RMF_USE_SIM_TIME
+              value: {{ .Values.global.RMF_USE_SIM_TIME | quote }}
+          command: ["/bin/bash"]
+          args: 
+            - -c
+            - >
+              /ros_entrypoint.sh
+              ros2 launch rmf_demos_gz simulation.launch.xml
+              sim_update_rate:='100'
+              gazebo_version:='8'
+              map_name:="office"
+          volumeMounts:
+            - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
+              name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+          volumeMounts:
+            - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
+              name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+            - mountPath: /etc/config
+              name: jwt-pub-key
+              readOnly: true
       volumes:
         - name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
           configMap:
