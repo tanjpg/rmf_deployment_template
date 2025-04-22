@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: rmf-tinyrobot-fleet-adapter
-          image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_SITE_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
+          image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf_sim.RMF_SIM_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
           imagePullPolicy: IfNotPresent
           env:
             - name: {{ .Values.global.DDS_ENV | quote }}
