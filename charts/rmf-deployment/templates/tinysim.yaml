@@ -94,4 +94,4 @@ spec:
     - hosts:
         - {{ .Values.hostName | quote }}
       secretName: rmf-simulation-ingress-tls
----
+{{- end -}}
