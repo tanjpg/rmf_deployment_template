@@ -62,9 +62,6 @@ spec:
               ros2 launch rmf_demos_gz simulation.launch.xml
               headless:=true
               map_name:="office"
-          volumeMounts:
-            - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
-              name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
           ports:
             - containerPort: 8006
               name: websocket-port
