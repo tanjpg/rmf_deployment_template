@@ -53,7 +53,7 @@ spec:
           args: 
             - -c
             - >
-              /ros_entrypoint.sh
+              ./ros_entrypoint.sh && 
               ros2 launch rmf_demos_fleet_adapter fleet_adapter.launch.xml
               use_sim_time:={{ .Values.global.RMF_USE_SIM_TIME }}
               nav_graph_file:="/opt/rmf_sim/share/rmf_demos_maps/maps/office/nav_graphs/0.yaml"
