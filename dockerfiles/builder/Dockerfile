@@ -1,6 +1,6 @@
 ARG ROS_DISTRO="jazzy"
 
-FROM docker.io/ros:$ROS_DISTRO
+FROM ros:$ROS_DISTRO-ros-base
 
 ENV CI=1
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
