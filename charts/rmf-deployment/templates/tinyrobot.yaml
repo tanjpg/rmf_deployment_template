@@ -64,7 +64,9 @@ spec:
 
               ros2 launch rmf_demos_gz simulation.launch.xml \
                 headless:=true \
-                map_name:="office"
+                map_name:="office" \
+                gazebo_version:='8' \
+                sim_update_rate:='100'
           ports:
             - containerPort: 8006
               name: websocket-port
