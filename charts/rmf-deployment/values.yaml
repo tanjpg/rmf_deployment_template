@@ -33,14 +33,15 @@ rmf:
   RMF_SITE_IMAGE: rmf-deployment/rmf-site
   RMF_SITE_NS: rmf-site
   RMF_CONFIG_PATH: share/rmf_demos/config
-  RMF_MAP_PATH: share/rmf_demos_maps/maps
+  RMF_NAV_PATH: share/rmf_demos_maps/maps
+  RMF_BUILDING_PATH: share/rmf_demos_maps
   RMF_BUILDING: office
 
 rmf_sim:
   RMF_SIM_IMAGE: rmf-deployment/rmf-sim
   RMF_SIM_PACKAGE: rmf_demos_gz
   RMF_SIM_LAUNCH_FILE: office.launch.xml
-  RMF_SIM_NS: rmf-sim
+  RMF_SIM_NS: rmf_sim
 
 rmf_web:
   POSTGRES_IMAGE: postgres:16.2
@@ -68,4 +69,3 @@ keycloak:
 map:
   LOCALHOST_MAP_STORAGE_PATH: /rmf/mysite_maps
   POD_MAP_STORAGE_PATH: /etc/rmf-site/mysite_maps
-  RMF_BUILDING_MAP: /opt/rmf-site/share/rmf_demos_maps/office/office.building.yaml

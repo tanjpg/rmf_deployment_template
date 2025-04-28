@@ -44,13 +44,15 @@ spec:
             - name: RMF_SERVER_URI
               value: {{ .Values.global.RMF_SERVER_URI | quote }}
             - name: NAV_GRAPH
-              value: {{ printf "/opt/%s/%s/%s/nav_graphs/%s" .Values.rmf_sim.RMF_SIM_NS .Values.rmf.RMF_MAP_PATH .Values.rmf.RMF_BUILDING .Values.adapters.NAV_GRAPH_FILE | quote }}
+              value: {{ printf "/opt/%s/%s/%s/nav_graphs/%s" .Values.rmf_sim.RMF_SIM_NS .Values.rmf.RMF_NAV_PATH .Values.rmf.RMF_BUILDING .Values.adapters.NAV_GRAPH_FILE | quote }}
               # value: "/opt/{{ .Values.rmf_sim.RMF_SIM_NS}}/{{ .Values.rmf.RMF_MAP_PATH}}/{{ .Values.rmf.RMF_BUILDING}}/nav_graphs/{{ .Values.adapters.NAV_GRAPH_FILE}}"
             - name: FLEET_ADAPTER_CONFIG
               value: {{ printf "/opt/%s/%s/%s/%s" .Values.rmf_sim.RMF_SIM_NS .Values.rmf.RMF_CONFIG_PATH .Values.rmf.RMF_BUILDING .Values.adapters.FLEET_ADAPTER_CONFIG_FILE | quote }}
               # value: "/opt/{{ .Values.rmf_sim.RMF_SIM_NS}}/{{ .Values.rmf.RMF_CONFIG_PATH}}/{{ .Values.rmf.RMF_BUILDING}}/{{ .Values.adapters.FLEET_ADAPTER_CONFIG_FILE}}"
             - name: RMF_USE_SIM_TIME
               value: {{ .Values.global.RMF_USE_SIM_TIME | quote }}
+            - name: RMF_BUILDING
+              value: {{ .Values.rmf.RMF_BUILDING | quote }}
           command: ["/bin/bash"]
           args:
             - -c
@@ -66,7 +68,7 @@ spec:
 
               ros2 launch rmf_demos_gz simulation.launch.xml \
                 headless:=true \
-                map_name:="office" \
+                map_name:=$(RMF_BUILDING) \
                 gazebo_version:='8' \
                 sim_update_rate:='100'
           volumeMounts:
