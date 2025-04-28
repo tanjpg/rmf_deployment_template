@@ -18,7 +18,7 @@ spec:
         - name: RMW_IMPLEMENTATION
           value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
         - name: RMF_BUILDING_MAP
-          value: {{ printf "/opt/%s/%s/%s/%s.building.yaml" .Values.rmf_sim.RMF_SITE_NS .Values.rmf.RMF_BUILDING_PATH .Values.rmf.RMF_BUILDING .Values.rmf.RMF_BUILDING | quote }}
+          value: {{ printf "/opt/%s/%s/%s/%s.building.yaml" .Values.rmf.RMF_SITE_NS .Values.rmf.RMF_BUILDING_PATH .Values.rmf.RMF_BUILDING .Values.rmf.RMF_BUILDING | quote }}
       command: ["/bin/bash"]
       args: 
         - -c
