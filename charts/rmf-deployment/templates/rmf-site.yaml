@@ -18,7 +18,7 @@ spec:
         - name: RMW_IMPLEMENTATION
           value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
         - name: RMF_BUILDING_MAP
-          value: {{ printf "/opt/%s/%s/%s/%s.building.yaml" .Values.rmf.RMF_SITE_NS .Values.rmf.RMF_BUILDING_PATH .Values.rmf.RMF_BUILDING .Values.rmf.RMF_BUILDING | quote }}
+          value: {{ printf "/opt/%s/share/%s/%s/%s.building.yaml" .Values.rmf.RMF_SITE_NS .Values.rmf.RMF_BUILDING_PACKAGE .Values.rmf.RMF_BUILDING .Values.rmf.RMF_BUILDING | quote }}
       command: ["/bin/bash"]
       args: 
         - -c
@@ -33,6 +33,82 @@ spec:
     - name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
       configMap:
         name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rmf-door-supervisor
+spec:
+  restartPolicy: Always
+  containers:
+    - name: rmf-door-supervisor
+      image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: RMF_USE_SIM_TIME
+          value: {{ .Values.global.RMF_USE_SIM_TIME | quote }}
+        - name: {{ .Values.global.DDS_ENV | quote }}
+          value: {{ .Values.global.DDS_CONFIG | quote }}
+        - name: ROS_DOMAIN_ID
+          value: {{ .Values.global.ROS_DOMAIN_ID | quote }}
+        - name: RMW_IMPLEMENTATION
+          value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
+      command: ["/bin/bash"]
+      args:
+        - -c
+        - >
+          /ros_entrypoint.sh
+          ros2 run rmf_fleet_adapter door_supervisor
+      volumeMounts:
+        - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
+          name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+  volumes:
+    - name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+      configMap:
+        name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+  tolerations:
+    - key: reserved
+      operator: Equal
+      value: rmf
+      effect: NoSchedule
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rmf-lift-supervisor
+spec:
+  restartPolicy: Always
+  containers:
+    - name: rmf-lift-supervisor
+      image: {{ .Values.global.REGISTRY_RMF | default "localhost" }}/{{ .Values.rmf.RMF_IMAGE }}:{{ .Values.global.DEPLOYMENT_IMAGE_TAG }}
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: RMF_USE_SIM_TIME
+          value: {{ .Values.global.RMF_USE_SIM_TIME | quote }}
+        - name: {{ .Values.global.DDS_ENV | quote }}
+          value: {{ .Values.global.DDS_CONFIG | quote }}
+        - name: ROS_DOMAIN_ID
+          value: {{ .Values.global.ROS_DOMAIN_ID | quote }}
+        - name: RMW_IMPLEMENTATION
+          value: {{ .Values.global.RMW_IMPLEMENTATION | quote }}
+      command: ["/bin/bash"]
+      args:
+        - -c
+        - >
+          /ros_entrypoint.sh
+          ros2 run rmf_fleet_adapter lift_supervisor
+      volumeMounts:
+        - mountPath: {{ .Values.global.DDS_CONFIG_MOUNTPATH | quote }}
+          name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+  volumes:
+    - name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+      configMap:
+        name: {{ .Values.global.DDS_CONFIG_VOLUME | quote }}
+  tolerations:
+    - key: reserved
+      operator: Equal
+      value: rmf
+      effect: NoSchedule
 ---
 apiVersion: v1
 kind: Pod
